@@ -185,8 +185,36 @@ def _public_file(f: dict) -> dict:
     }
 
 
-def write_json_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], repo_meta: dict) -> None:
-    """Write data.json (all versions) and v/<version>.json + v/latest.json files."""
+def _json_to_html(data: dict, package_name: str, version: str) -> str:
+    """Wrap JSON data in a simple HTML template."""
+    json_str = json.dumps(data, indent=2)
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{package_name} - {version}</title>
+  <style>
+    body {{
+      font-family: monospace;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 20px;
+    }}
+    pre {{
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }}
+  </style>
+</head>
+<body>
+<pre>{json_str}</pre>
+</body>
+</html>
+"""
+
+
+def write_html_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], repo_meta: dict) -> None:
+    """Write data/index.html and v/<version>/index.html + v/latest/index.html."""
     package_name = pkg["package_name"]
     versions = [g["version"] for g in version_groups]
     latest_version = versions[0] if versions else None
@@ -204,11 +232,17 @@ def write_json_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
             for g in version_groups
         ],
     }
-    (output_dir / "data.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
-    print(f"  Wrote {output_dir / 'data.json'}")
 
-    v_dir = output_dir / "v"
-    v_dir.mkdir(exist_ok=True)
+    # Write main data file as /data/index.html
+    data_dir = output_dir / "data"
+    data_dir.mkdir(exist_ok=True)
+    (data_dir / "index.html").write_text(_json_to_html(data, package_name, "data"), encoding="utf-8")
+    print(f"  Wrote {data_dir / 'index.html'}")
+
+    # Version directory
+    v_dir = output_dir
+    # v_dir.mkdir(exist_ok=True)
+
     for group in version_groups:
         ver = group["version"]
         ver_data = {
@@ -217,7 +251,10 @@ def write_json_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
             "requires_python": pkg["requires_python"],
             "files": [_public_file(f) for f in group["files"]],
         }
-        (v_dir / f"{ver}.json").write_text(json.dumps(ver_data, indent=2), encoding="utf-8")
+
+        ver_dir = v_dir / f"v{ver}"
+        ver_dir.mkdir(exist_ok=True)
+        (ver_dir / "index.html").write_text(_json_to_html(ver_data, package_name, ver), encoding="utf-8")
 
     if latest_version:
         latest_data = {
@@ -226,8 +263,12 @@ def write_json_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
             "requires_python": pkg["requires_python"],
             "files": [_public_file(f) for f in version_groups[0]["files"]],
         }
-        (v_dir / "latest.json").write_text(json.dumps(latest_data, indent=2), encoding="utf-8")
-        print(f"  Wrote {v_dir}/latest.json + {len(versions)} version file(s)")
+
+        latest_dir = v_dir / "latest"
+        latest_dir.mkdir(exist_ok=True)
+        (latest_dir / "index.html").write_text(_json_to_html(latest_data, package_name, latest_version), encoding="utf-8")
+
+        print(f"  Wrote {latest_dir}/index.html + {len(versions)} version folders")
 
 
 def main() -> int:
@@ -260,7 +301,7 @@ def main() -> int:
         )
         (output_dir / "index.html").write_text(html, encoding="utf-8")
         print(f"  Wrote {output_dir / 'index.html'}")
-        write_json_outputs(output_dir, pkg, version_groups, repo_meta)
+        write_html_outputs(output_dir, pkg, version_groups, repo_meta)
 
     print("\nDone.")
     return 0
