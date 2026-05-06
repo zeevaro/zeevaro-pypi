@@ -190,5 +190,21 @@
     "sha256": "a4068a6de69d80a55c7e0229902806cacc522f07e8acd3b819bcabd31585798a",
     "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.1/zeevaro_middleware-1.7.1.tar.gz",
     "version": "1.7.1"
+  },
+  "zeevaro_middleware-1.8.0-py3-none-any.whl": {
+    "file_type": "whl",
+    "filename": "zeevaro_middleware-1.8.0-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "dc8eca5e6f15ba5543c8c2669104049ec0f947da3ce7eddfc9d08fe336c47eb6",
+    "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.0/zeevaro_middleware-1.8.0-py3-none-any.whl",
+    "version": "1.8.0"
+  },
+  "zeevaro_middleware-1.8.0.tar.gz": {
+    "file_type": "sdist",
+    "filename": "zeevaro_middleware-1.8.0.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "bbabbbb295861942e37865a4504773d3d99803bd1ccea0c84848a0e1f67ca66d",
+    "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.0/zeevaro_middleware-1.8.0.tar.gz",
+    "version": "1.8.0"
   }
 }
