@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Rebuild all package index pages from GitHub Releases.
 
-Reads PACKAGES below and regenerates <package-name>/index.html for each entry
+Reads packages.json and regenerates <package-name>/index.html for each entry
 by querying the GitHub Releases API, downloading each asset to compute its
 SHA-256 hash, and rendering pkg_template.html.
 
 Environment variables:
-    GITHUB_TOKEN  — PAT with repo scope on all source repos listed in PACKAGES.
+    GITHUB_TOKEN  — PAT with repo scope on all source repos listed in packages.json.
                     Must be able to list releases and download release assets.
 
 Usage:
@@ -26,30 +26,9 @@ try:
 except ImportError:
     sys.exit("jinja2 is required: pip install jinja2")
 
-# ---------------------------------------------------------------------------
-# Package registry — add one dict per package to index.
-# ---------------------------------------------------------------------------
-PACKAGES = [
-    {
-        "repo": "zeevaro/zeevaro-middleware",
-        "package_name": "zeevaro-middleware",
-        "requires_python": ">=3.12",
-    },
-    {
-        "repo": "zeevaro/tradex-core",
-        "package_name": "tradex-core",
-        "requires_python": ">=3.12",
-    },
-    # To add a new package, append an entry here:
-    # {
-    #     "repo": "zeevaro/your-new-package",
-    #     "package_name": "your-new-package",
-    #     "requires_python": ">=3.12",
-    # },
-]
-
 API_BASE = "https://api.github.com"
 ROOT = Path(__file__).resolve().parent
+PACKAGES = json.loads((ROOT / "packages.json").read_text())
 
 
 def github_api_get(url: str, token: str) -> list | dict:
@@ -93,6 +72,32 @@ def sha256_of_asset(asset_url: str, token: str) -> str:
     return h.hexdigest()
 
 
+def _extract_version(filename: str) -> str:
+    base = filename[:-7] if filename.endswith(".tar.gz") else filename[:-4]
+    parts = base.split("-")
+    return parts[1] if len(parts) > 1 else "unknown"
+
+
+def _version_tuple(v: str) -> tuple:
+    try:
+        return tuple(int(x) for x in v.split("."))
+    except ValueError:
+        return (0,)
+
+
+def _group_by_version(files: list[dict]) -> list[dict]:
+    seen: dict[str, list] = {}
+    order: list[str] = []
+    for f in files:
+        v = f["version"]
+        if v not in seen:
+            seen[v] = []
+            order.append(v)
+        seen[v].append(f)
+    order.sort(key=_version_tuple, reverse=True)
+    return [{"version": v, "files": seen[v]} for v in order]
+
+
 def collect_files(repo: str, requires_python: str, token: str) -> list[dict]:
     """Return all non-draft, non-prerelease wheel and sdist assets for a repo."""
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
@@ -113,6 +118,8 @@ def collect_files(repo: str, requires_python: str, token: str) -> list[dict]:
                 "url": asset["browser_download_url"],
                 "sha256": digest,
                 "requires_python": requires_python,
+                "version": _extract_version(name),
+                "file_type": "whl" if name.endswith(".whl") else "sdist",
             })
     return files
 
@@ -130,7 +137,11 @@ def main() -> int:
         files = collect_files(pkg["repo"], pkg["requires_python"], token)
         print(f"  Collected {len(files)} artifact(s)")
 
-        html = template.render(package_name=pkg["package_name"], package_files=files)
+        html = template.render(
+            package_name=pkg["package_name"],
+            package_files=files,
+            version_groups=_group_by_version(files),
+        )
         output_dir = ROOT / pkg["package_name"]
         output_dir.mkdir(exist_ok=True)
         (output_dir / "index.html").write_text(html, encoding="utf-8")

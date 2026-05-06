@@ -1,10 +1,216 @@
 <!DOCTYPE html>
-<html>
-  <head><title>Links for {{ package_name }}</title></head>
-  <body>
-    <h1>Links for {{ package_name }}</h1>
-    {% for file in package_files %}
-    <a href="{{ file.url }}#sha256={{ file.sha256 }}"{% if file.requires_python %} data-requires-python="{{ file.requires_python }}"{% endif %}>{{ file.filename }}</a><br/>
-    {% endfor %}
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ package_name }} &mdash; Zeevaro PyPI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header { background: #0f172a; padding: 0 1.5rem; }
+
+    .header-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid #1e293b;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .back-link:hover { color: #e2e8f0; border-color: #475569; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      overflow: hidden;
+    }
+
+    .logo svg { color: #818cf8; flex-shrink: 0; }
+    .logo-name { color: #818cf8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .header-pill {
+      background: #1e1b4b;
+      color: #a5b4fc;
+      font-size: 0.63rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      border: 1px solid #312e81;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    main { flex: 1; padding: 2.5rem 1.5rem; }
+
+    .container { max-width: 920px; margin: 0 auto; }
+
+    .version-section { margin-bottom: 1.75rem; }
+
+    .version-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.625rem;
+    }
+
+    .version-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #4338ca;
+      background: #e0e7ff;
+      border: 1px solid #c7d2fe;
+      padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .version-rule {
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    .files-list {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .file-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.78rem 1.1rem;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.1s;
+    }
+
+    .file-row:last-child { border-bottom: none; }
+    .file-row:hover { background: #f8fafc; }
+
+    .type-badge {
+      font-size: 0.63rem;
+      font-weight: 700;
+      padding: 0.18rem 0.52rem;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .badge-whl  { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .badge-sdist { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+
+    .file-link {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      color: #334155;
+      text-decoration: none;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    .file-link:hover { color: #6366f1; }
+
+    .py-req {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    footer {
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      font-size: 0.73rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="../" class="back-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Index
+      </a>
+      <div class="logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        <span class="logo-name">{{ package_name }}</span>
+      </div>
+      <div class="header-pill">Private</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      {% for group in version_groups %}
+      <div class="version-section">
+        <div class="version-heading">
+          <span class="version-tag">v{{ group.version }}</span>
+          <div class="version-rule"></div>
+        </div>
+        <div class="files-list">
+          {% for file in group.files %}
+          <div class="file-row">
+            <span class="type-badge {% if file.file_type == 'whl' %}badge-whl{% else %}badge-sdist{% endif %}">{% if file.file_type == 'whl' %}wheel{% else %}sdist{% endif %}</span>
+            <a href="{{ file.url }}#sha256={{ file.sha256 }}"{% if file.requires_python %} data-requires-python="{{ file.requires_python }}"{% endif %} class="file-link">{{ file.filename }}</a>
+            {% if file.requires_python %}<span class="py-req">py {{ file.requires_python }}</span>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <footer>
+    Zeevaro Private PyPI &mdash; Powered by GitHub Pages
+  </footer>
+</body>
 </html>

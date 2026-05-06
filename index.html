@@ -1,9 +1,217 @@
 <!DOCTYPE html>
-<html>
-  <head><title>Zeevaro Private PyPI</title></head>
-  <body>
-    <h1>Zeevaro Private PyPI</h1>
-    <a href="zeevaro-middleware/">zeevaro-middleware</a>
-    <a href="tradex-core/">tradex-core</a>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeevaro Private PyPI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header { background: #0f172a; padding: 0 1.5rem; }
+
+    .header-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 1.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      letter-spacing: -0.3px;
+      text-decoration: none;
+    }
+
+    .logo svg { color: #818cf8; flex-shrink: 0; }
+
+    .logo-accent { color: #818cf8; }
+
+    .header-pill {
+      background: #1e1b4b;
+      color: #a5b4fc;
+      font-size: 0.63rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      border: 1px solid #312e81;
+    }
+
+    main { flex: 1; padding: 2.5rem 1.5rem; }
+
+    .container { max-width: 920px; margin: 0 auto; }
+
+    .install-box {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .install-box p {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 0.6rem;
+    }
+
+    .install-box code {
+      display: block;
+      background: #0f172a;
+      color: #7dd3fc;
+      padding: 0.7rem 1rem;
+      border-radius: 7px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 0.875rem;
+    }
+
+    .package-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    }
+
+    .package-card:hover {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.08), 0 4px 16px rgba(0,0,0,0.06);
+      transform: translateY(-1px);
+    }
+
+    .pkg-icon {
+      width: 42px;
+      height: 42px;
+      background: #eef2ff;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6366f1;
+      flex-shrink: 0;
+    }
+
+    .pkg-info { min-width: 0; }
+
+    .pkg-name {
+      font-weight: 600;
+      font-size: 0.925rem;
+      color: #1e293b;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pkg-meta {
+      font-size: 0.73rem;
+      color: #94a3b8;
+      margin-top: 0.22rem;
+    }
+
+    footer {
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      font-size: 0.73rem;
+      color: #94a3b8;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 480px) {
+      .packages-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+          <line x1="12" y1="22.08" x2="12" y2="12"/>
+        </svg>
+        Zeevaro <span class="logo-accent">PyPI</span>
+      </div>
+      <div class="header-pill">Private</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="install-box">
+        <p>Install packages from this private index:</p>
+        <code>pip install &lt;package&gt; --index-url https://&lt;your-domain&gt;/</code>
+      </div>
+
+      <div class="section-label">Available Packages</div>
+      <div class="packages-grid">
+        <a href="zeevaro-middleware/" class="package-card">
+          <div class="pkg-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div class="pkg-info">
+            <div class="pkg-name">zeevaro-middleware</div>
+            <div class="pkg-meta">Python &ge; 3.12</div>
+          </div>
+        </a>
+        <a href="tradex-core/" class="package-card">
+          <div class="pkg-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div class="pkg-info">
+            <div class="pkg-name">tradex-core</div>
+            <div class="pkg-meta">Python &ge; 3.12</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Zeevaro Private PyPI &mdash; Powered by GitHub Pages
+  </footer>
+</body>
 </html>
