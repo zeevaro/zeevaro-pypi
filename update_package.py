@@ -15,8 +15,10 @@ Usage:
 from __future__ import annotations
 
 import hashlib
+import html as html_lib
 import json
 import os
+import re
 import sys
 import urllib.request
 from pathlib import Path
@@ -98,7 +100,42 @@ def _group_by_version(files: list[dict]) -> list[dict]:
     return [{"version": v, "files": seen[v]} for v in order]
 
 
-def collect_files(repo: str, requires_python: str, token: str) -> list[dict]:
+def _bootstrap_cache_from_html(html_path: Path, requires_python: str) -> dict:
+    cache: dict = {}
+    if not html_path.exists():
+        return cache
+    text = html_path.read_text(encoding="utf-8")
+    pattern = re.compile(
+        r'href="([^"]+#sha256=([a-f0-9]+))"[^>]*class="file-link">([^<]+)</a>'
+    )
+    for m in pattern.finditer(text):
+        href, sha256, filename = m.group(1), m.group(2), html_lib.unescape(m.group(3))
+        url = href.split("#sha256=")[0]
+        cache[filename] = {
+            "filename": filename,
+            "url": url,
+            "sha256": sha256,
+            "requires_python": requires_python,
+            "version": _extract_version(filename),
+            "file_type": "whl" if filename.endswith(".whl") else "sdist",
+        }
+    return cache
+
+
+def load_file_cache(pkg_dir: Path, requires_python: str) -> dict:
+    cache_path = pkg_dir / "file_cache.json"
+    if cache_path.exists():
+        return json.loads(cache_path.read_text())
+    return _bootstrap_cache_from_html(pkg_dir / "index.html", requires_python)
+
+
+def save_file_cache(pkg_dir: Path, cache: dict) -> None:
+    (pkg_dir / "file_cache.json").write_text(
+        json.dumps(cache, indent=2, sort_keys=True), encoding="utf-8"
+    )
+
+
+def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> list[dict]:
     """Return all non-draft, non-prerelease wheel and sdist assets for a repo."""
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
     print(f"  Found {len(releases)} release(s)")
@@ -111,16 +148,22 @@ def collect_files(repo: str, requires_python: str, token: str) -> list[dict]:
             name = asset["name"]
             if not (name.endswith(".whl") or name.endswith(".tar.gz")):
                 continue
-            print(f"  Hashing {name} ...", flush=True)
-            digest = sha256_of_asset(asset["url"], token)
-            files.append({
-                "filename": name,
-                "url": asset["browser_download_url"],
-                "sha256": digest,
-                "requires_python": requires_python,
-                "version": _extract_version(name),
-                "file_type": "whl" if name.endswith(".whl") else "sdist",
-            })
+            if name in cache:
+                print(f"  Using cached hash for {name}")
+                files.append(cache[name])
+            else:
+                print(f"  Hashing {name} ...", flush=True)
+                digest = sha256_of_asset(asset["url"], token)
+                record = {
+                    "filename": name,
+                    "url": asset["browser_download_url"],
+                    "sha256": digest,
+                    "requires_python": requires_python,
+                    "version": _extract_version(name),
+                    "file_type": "whl" if name.endswith(".whl") else "sdist",
+                }
+                cache[name] = record
+                files.append(record)
     return files
 
 
@@ -134,7 +177,12 @@ def main() -> int:
 
     for pkg in PACKAGES:
         print(f"\nProcessing {pkg['package_name']} ({pkg['repo']}) ...")
-        files = collect_files(pkg["repo"], pkg["requires_python"], token)
+        output_dir = ROOT / pkg["package_name"]
+        output_dir.mkdir(exist_ok=True)
+
+        cache = load_file_cache(output_dir, pkg["requires_python"])
+        files = collect_files(pkg["repo"], pkg["requires_python"], token, cache)
+        save_file_cache(output_dir, cache)
         print(f"  Collected {len(files)} artifact(s)")
 
         html = template.render(
@@ -142,8 +190,6 @@ def main() -> int:
             package_files=files,
             version_groups=_group_by_version(files),
         )
-        output_dir = ROOT / pkg["package_name"]
-        output_dir.mkdir(exist_ok=True)
         (output_dir / "index.html").write_text(html, encoding="utf-8")
         print(f"  Wrote {output_dir / 'index.html'}")
 
