@@ -1,0 +1,23 @@
+{
+  "package_name": "zeevaro-middleware",
+  "version": "1.7.1",
+  "requires_python": ">=3.12",
+  "files": [
+    {
+      "filename": "zeevaro_middleware-1.7.1-py3-none-any.whl",
+      "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.1/zeevaro_middleware-1.7.1-py3-none-any.whl",
+      "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/413464523",
+      "sha256": "8319173cdd301e13093cf594d5876b535dc9a44c17db0d4c625ca9e15a42b7eb",
+      "file_type": "whl",
+      "requires_python": ">=3.12"
+    },
+    {
+      "filename": "zeevaro_middleware-1.7.1.tar.gz",
+      "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.1/zeevaro_middleware-1.7.1.tar.gz",
+      "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/413464522",
+      "sha256": "a4068a6de69d80a55c7e0229902806cacc522f07e8acd3b819bcabd31585798a",
+      "file_type": "sdist",
+      "requires_python": ">=3.12"
+    }
+  ]
+}

@@ -174,6 +174,62 @@ def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> l
     return files
 
 
+def _public_file(f: dict) -> dict:
+    return {
+        "filename": f["filename"],
+        "url": f["url"],
+        "api_url": f.get("api_url", ""),
+        "sha256": f["sha256"],
+        "file_type": f["file_type"],
+        "requires_python": f["requires_python"],
+    }
+
+
+def write_json_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], repo_meta: dict) -> None:
+    """Write data.json (all versions) and v/<version>.json + v/latest.json files."""
+    package_name = pkg["package_name"]
+    versions = [g["version"] for g in version_groups]
+    latest_version = versions[0] if versions else None
+
+    data = {
+        "package_name": package_name,
+        "description": repo_meta.get("description") or "",
+        "repo_url": repo_meta.get("html_url") or "",
+        "requires_python": pkg["requires_python"],
+        "latest_version": latest_version,
+        "total_versions": len(versions),
+        "versions": versions,
+        "version_groups": [
+            {"version": g["version"], "files": [_public_file(f) for f in g["files"]]}
+            for g in version_groups
+        ],
+    }
+    (output_dir / "data.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+    print(f"  Wrote {output_dir / 'data.json'}")
+
+    v_dir = output_dir / "v"
+    v_dir.mkdir(exist_ok=True)
+    for group in version_groups:
+        ver = group["version"]
+        ver_data = {
+            "package_name": package_name,
+            "version": ver,
+            "requires_python": pkg["requires_python"],
+            "files": [_public_file(f) for f in group["files"]],
+        }
+        (v_dir / f"{ver}.json").write_text(json.dumps(ver_data, indent=2), encoding="utf-8")
+
+    if latest_version:
+        latest_data = {
+            "package_name": package_name,
+            "version": latest_version,
+            "requires_python": pkg["requires_python"],
+            "files": [_public_file(f) for f in version_groups[0]["files"]],
+        }
+        (v_dir / "latest.json").write_text(json.dumps(latest_data, indent=2), encoding="utf-8")
+        print(f"  Wrote {v_dir}/latest.json + {len(versions)} version file(s)")
+
+
 def main() -> int:
     token = os.environ.get("GITHUB_TOKEN", "")
     if not token:
@@ -193,16 +249,18 @@ def main() -> int:
         print(f"  Collected {len(files)} artifact(s)")
 
         repo_meta = github_api_get(f"{API_BASE}/repos/{pkg['repo']}", token)
+        version_groups = _group_by_version(files)
         html = template.render(
             package_name=pkg["package_name"],
             package_files=files,
-            version_groups=_group_by_version(files),
+            version_groups=version_groups,
             description=repo_meta.get("description") or "",
             repo_url=repo_meta.get("html_url") or "",
             requires_python=pkg["requires_python"],
         )
         (output_dir / "index.html").write_text(html, encoding="utf-8")
         print(f"  Wrote {output_dir / 'index.html'}")
+        write_json_outputs(output_dir, pkg, version_groups, repo_meta)
 
     print("\nDone.")
     return 0
