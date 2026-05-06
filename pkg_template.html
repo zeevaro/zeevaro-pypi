@@ -528,23 +528,42 @@
     const filterInput = document.getElementById('version-filter');
     const filterCount = document.getElementById('filter-count');
     const noResults   = document.getElementById('no-results');
+    const cards       = document.querySelectorAll('.version-card');
 
-    filterInput.addEventListener('input', function() {
-      const raw = this.value.trim();
+    function applyFilter(raw) {
       const constraints = parseConstraints(raw);
-      const cards = document.querySelectorAll('.version-card');
       let visible = 0;
-
       cards.forEach(function(card) {
-        const ver = card.dataset.version;
-        const show = raw === '' || constraints.length === 0 || matchesAll(ver, constraints);
+        const show = raw === '' || constraints.length === 0 || matchesAll(card.dataset.version, constraints);
         card.classList.toggle('hidden', !show);
         if (show) visible++;
       });
-
       filterCount.textContent = raw ? visible + ' of ' + cards.length + ' shown' : '';
       noResults.style.display = (visible === 0 && raw !== '') ? 'block' : 'none';
+    }
+
+    filterInput.addEventListener('input', function() {
+      const raw = this.value.trim();
+      applyFilter(raw);
+      // Keep URL in sync so the filtered view is shareable
+      const url = new URL(window.location.href);
+      if (raw) {
+        url.searchParams.set('filter', raw);
+      } else {
+        url.searchParams.delete('filter');
+      }
+      history.replaceState(null, '', url);
     });
+
+    // Seed filter from URL on load (?filter=>=1.5.0 or ?v=>=1.5.0)
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const initial = params.get('filter') || params.get('v') || '';
+      if (initial) {
+        filterInput.value = initial;
+        applyFilter(initial);
+      }
+    })();
 
     // ── Copy helpers ────────────────────────────────────────────────────
     function copyText(text, btn) {
