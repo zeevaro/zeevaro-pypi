@@ -153,6 +153,8 @@ def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> l
             if not (name.endswith(".whl") or name.endswith(".tar.gz")):
                 continue
             if name in cache:
+                if "api_url" not in cache[name]:
+                    cache[name]["api_url"] = asset["url"]
                 print(f"  Using cached hash for {name}")
                 files.append(cache[name])
             else:
@@ -161,6 +163,7 @@ def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> l
                 record = {
                     "filename": name,
                     "url": asset["browser_download_url"],
+                    "api_url": asset["url"],
                     "sha256": digest,
                     "requires_python": requires_python,
                     "version": _extract_version(name),
@@ -189,10 +192,14 @@ def main() -> int:
         save_file_cache(output_dir, cache)
         print(f"  Collected {len(files)} artifact(s)")
 
+        repo_meta = github_api_get(f"{API_BASE}/repos/{pkg['repo']}", token)
         html = template.render(
             package_name=pkg["package_name"],
             package_files=files,
             version_groups=_group_by_version(files),
+            description=repo_meta.get("description") or "",
+            repo_url=repo_meta.get("html_url") or "",
+            requires_python=pkg["requires_python"],
         )
         (output_dir / "index.html").write_text(html, encoding="utf-8")
         print(f"  Wrote {output_dir / 'index.html'}")
