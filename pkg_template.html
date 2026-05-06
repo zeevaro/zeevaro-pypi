@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Links for {{ package_name }}</title></head>
+  <body>
+    <h1>Links for {{ package_name }}</h1>
+    {% for file in package_files %}
+    <a href="{{ file.url }}#sha256={{ file.sha256 }}"{% if file.requires_python %} data-requires-python="{{ file.requires_python }}"{% endif %}>{{ file.filename }}</a><br/>
+    {% endfor %}
+  </body>
+</html>

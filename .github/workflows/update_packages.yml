@@ -1,0 +1,61 @@
+name: Update Package Index
+
+on:
+  repository_dispatch:
+    types: [new-release]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install script dependencies
+        run: pip install -r requirements.txt
+
+      - name: Rebuild package index
+        env:
+          GITHUB_TOKEN: ${{ secrets.MIDDLEWARE_RELEASE_PAT }}
+        run: python update_package.py
+
+      - name: Commit updated index
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add zeevaro-middleware/index.html
+          if git diff --cached --quiet; then
+            echo "No changes — skipping commit"
+          else
+            git commit -m "chore: update zeevaro-middleware index (${{ github.event.client_payload.tag || 'manual' }})"
+            git push
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
