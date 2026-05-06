@@ -63,10 +63,11 @@
 3. Both artifacts are uploaded to the GitHub Release page (private)
 4. `release.yml` fires a `repository_dispatch` event to `zeevaro-pypi` with `{"tag": "vX.Y.Z"}`
 5. `update_packages.yml` wakes up; runs `update_package.py`
-6. `update_package.py` calls `GET /repos/<org>/<repo>/releases` (paginated) for each entry in `PACKAGES`
-7. For each non-draft, non-prerelease release: iterates assets, downloads each via the API URL (with Bearer token) to compute SHA-256 — the redirect to S3 is followed automatically
-8. Renders `pkg_template.html` with the full file list → overwrites `<package>/index.html`
-9. Commits and pushes the updated HTML
+6. `update_package.py` loads the per-package SHA-256 cache from `<package>/file_cache.json` (bootstrapped from the existing `index.html` if no cache file exists yet)
+7. For each entry in `packages.json`: calls `GET /repos/<org>/<repo>/releases` (paginated); for each non-draft, non-prerelease asset — if the filename is already in the cache the stored hash is reused, otherwise the asset is downloaded via the API URL (Bearer token, S3 redirect followed automatically) and hashed
+8. Saves the updated cache back to `<package>/file_cache.json`
+9. Renders `pkg_template.html` with the full file list → overwrites `<package>/index.html`
+10. Commits and pushes the updated HTML and cache files
 10. GitHub Pages redeploys (typically < 60 seconds)
 11. `pip install <package>==X.Y.Z --extra-index-url ...` now resolves the new version
 
@@ -113,9 +114,11 @@ PEP 503 mandates the `#sha256=` URL fragment for supply-chain integrity. `pip` v
 | File | Role |
 |---|---|
 | `index.html` | Root PEP 503 index — one `<a>` per package |
-| `<package>/index.html` | Per-package version listing with SHA-256 hashes |
+| `<package>/index.html` | Per-package version listing with SHA-256 hashes — auto-generated, do not edit |
+| `<package>/file_cache.json` | SHA-256 cache keyed by filename — persists across runs so only new assets are downloaded; auto-generated, do not edit |
+| `packages.json` | Registry of indexed packages — one object per package with `repo`, `package_name`, and `requires_python` |
 | `pkg_template.html` | Jinja2 template used by `update_package.py` to generate per-package pages |
-| `update_package.py` | Automation script — queries GitHub API, hashes assets, renders template |
+| `update_package.py` | Automation script — queries GitHub API, hashes new assets, updates cache, renders template |
 | `requirements.txt` | Python deps for `update_package.py` (jinja2 only) |
 | `.github/workflows/update_packages.yml` | GitHub Actions workflow — triggered by dispatch or manually; deploys Pages |
 

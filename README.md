@@ -34,9 +34,10 @@ release.yml fires repository_dispatch → this repo
     │
     ▼
 update_packages.yml runs update_package.py
-    │  (queries GitHub Releases API, downloads each asset to compute SHA-256)
+    │  (queries GitHub Releases API; hashes only new assets — known hashes
+    │   are read from <package>/file_cache.json)
     ▼
-<package>/index.html is rewritten with new download links
+<package>/index.html and file_cache.json are updated
     │
     ▼
 GitHub Pages redeploys — new version is instantly pip-installable
@@ -100,7 +101,7 @@ If a release was missed or you need to backfill:
 
 1. Go to **Actions** → **Update Package Index** → **Run workflow**
 
-This re-queries all GitHub Releases for every indexed package and regenerates the full index from scratch.
+This re-queries all GitHub Releases for every indexed package. Known assets are read from `<package>/file_cache.json` (no re-download); only genuinely new or missing assets are hashed.
 
 ---
 

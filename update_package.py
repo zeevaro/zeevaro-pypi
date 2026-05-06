@@ -2,8 +2,12 @@
 """Rebuild all package index pages from GitHub Releases.
 
 Reads packages.json and regenerates <package-name>/index.html for each entry
-by querying the GitHub Releases API, downloading each asset to compute its
-SHA-256 hash, and rendering pkg_template.html.
+by querying the GitHub Releases API and rendering pkg_template.html.
+
+SHA-256 hashes are cached in <package-name>/file_cache.json so that only new
+release assets are downloaded on each run. On first run (no cache file), the
+script bootstraps from the existing index.html if present; otherwise it
+downloads and hashes everything.
 
 Environment variables:
     GITHUB_TOKEN  — PAT with repo scope on all source repos listed in packages.json.

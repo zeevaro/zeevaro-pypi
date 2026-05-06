@@ -16,14 +16,15 @@ zeevaro-pypi/
 │   └── workflows/
 │       └── update_packages.yml       # Triggered by dispatch or manually
 ├── <package-name>/
-│   └── index.html                    # Auto-generated — do not edit by hand
+│   ├── index.html                    # Auto-generated — do not edit by hand
+│   └── file_cache.json               # SHA-256 cache — auto-generated — do not edit by hand
 ├── README.md
 ├── ARCHITECTURE.md
 ├── ONBOARDING.md
 └── CONTRIBUTING.md
 ```
 
-**Rule:** Never manually edit a `<package-name>/index.html` file. They are overwritten on every workflow run. All changes to package index content must go through `update_package.py`.
+**Rule:** Never manually edit `<package-name>/index.html` or `<package-name>/file_cache.json`. Both are overwritten on every workflow run. All changes to package index content must go through `update_package.py`.
 
 ---
 
@@ -76,7 +77,7 @@ The script has no test suite. When making changes:
 2. Inspect `<package-name>/index.html` — confirm all versions appear with correct SHA-256 hashes
 3. Verify the HTML is valid PEP 503: each link must end in `#sha256=<64-char-hex>`
 4. Run `python -m http.server 8080` and install a package locally to confirm pip resolves correctly
-5. Do **not** commit the generated `index.html` changes — the workflow regenerates them; your PR should only contain changes to `update_package.py`, templates, or root `index.html`
+5. Do **not** commit the generated `<package>/index.html` or `<package>/file_cache.json` changes — the workflow regenerates both; your PR should only contain changes to `update_package.py`, `packages.json`, templates, or root `index.html`
 
 ---
 

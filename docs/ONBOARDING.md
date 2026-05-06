@@ -154,22 +154,22 @@ Create `<your-package-name>/index.html`:
 </html>
 ```
 
-### 3.2 Register the package in `update_package.py`
+### 3.2 Register the package in `packages.json`
 
-`update_package.py` uses a `PACKAGES` list at the top of the file. Add your package by appending a new entry:
+`packages.json` is the registry of all indexed packages. Add your package by appending a new entry:
 
-```python
-PACKAGES = [
-    # existing entries ...
-    {
-        "repo": "your-org/your-new-package",
-        "package_name": "your-package-name",
-        "requires_python": ">=3.12",
-    },
+```json
+[
+  // existing entries ...
+  {
+    "repo": "your-org/your-new-package",
+    "package_name": "your-package-name",
+    "requires_python": ">=3.12"
+  }
 ]
 ```
 
-That's the only code change required — the rest of the script loops over this list automatically.
+That's the only code change required — `update_package.py` loops over this list automatically.
 
 ### 3.3 Add the package to the root index
 
@@ -196,7 +196,7 @@ If the new package is in a different org, generate a new PAT with access to both
 The new package's `<your-package-name>/index.html` is currently a placeholder. Populate it with all existing releases by triggering the workflow manually:
 
 1. Go to **Actions** → **Update Package Index** → **Run workflow** → **Run workflow**
-2. Watch the logs — you should see `Hashing your-package-name-X.Y.Z-py3-none-any.whl ...` for each release
+2. Watch the logs — you should see `Hashing your-package-name-X.Y.Z-py3-none-any.whl ...` for each release (subsequent runs will show `Using cached hash for ...` instead)
 3. After the workflow completes, verify: `curl -s https://zeevaro.github.io/zeevaro-pypi/your-package-name/`
 
 ---
@@ -294,7 +294,7 @@ Source repo
 
 zeevaro-pypi repo
   [ ] <package-name>/index.html placeholder created
-  [ ] Package added to PACKAGES list in update_package.py
+  [ ] Package added to packages.json
   [ ] Package added to root index.html
   [ ] PACKAGES_READ_PAT secret covers the new source repo
   [ ] Backfill workflow run triggered and completed successfully
