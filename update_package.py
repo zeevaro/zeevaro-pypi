@@ -35,6 +35,11 @@ PACKAGES = [
         "package_name": "zeevaro-middleware",
         "requires_python": ">=3.12",
     },
+    {
+        "repo": "zeevaro/tradex-core",
+        "package_name": "tradex-core",
+        "requires_python": ">=3.12",
+    },
     # To add a new package, append an entry here:
     # {
     #     "repo": "zeevaro/your-new-package",
