@@ -28,13 +28,11 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install script dependencies
-        run: pip install -r requirements.txt
-
       - name: Rebuild package index
         env:
           GITHUB_TOKEN: ${{ secrets.PACKAGES_READ_PAT }}
-        run: python update_package.py
+        run: |
+          bash scripts/build.sh
 
       - name: Commit updated index
         run: |
