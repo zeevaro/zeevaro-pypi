@@ -4,6 +4,8 @@
 Reads packages.json and regenerates <package-name>/index.html for each entry
 by querying the GitHub Releases API and rendering pkg_template.html.
 
+Each entry in packages.json must include an "ecosystem" field ("pypi" or "npm").
+
 SHA-256 hashes are cached in <package-name>/file_cache.json so that only new
 release assets are downloaded on each run. On first run (no cache file), the
 script bootstraps from the existing index.html if present; otherwise it
@@ -78,7 +80,7 @@ def sha256_of_asset(asset_url: str, token: str) -> str:
     return h.hexdigest()
 
 
-def _extract_version(filename: str) -> str:
+def _extract_pypi_version(filename: str) -> str:
     base = filename[:-7] if filename.endswith(".tar.gz") else filename[:-4]
     parts = base.split("-")
     return parts[1] if len(parts) > 1 else "unknown"
@@ -104,7 +106,27 @@ def _group_by_version(files: list[dict]) -> list[dict]:
     return [{"version": v, "files": seen[v]} for v in order]
 
 
-def _bootstrap_cache_from_html(html_path: Path, requires_python: str) -> dict:
+def _sanitize_pkg_dir(package_name: str) -> str:
+    """Convert package_name to a filesystem/URL-safe directory name.
+
+    '@scope/name' -> 'scope-name'
+    'plain-pkg'   -> 'plain-pkg'  (unchanged)
+    """
+    return package_name.lstrip("@").replace("/", "-")
+
+
+def _extract_npm_version(filename: str, sanitized_name: str) -> str:
+    """Extract version from '<sanitized_name>-<version>.tgz'.
+
+    Example: 'zeevaro-tradex-js-1.2.3.tgz', 'zeevaro-tradex-js' -> '1.2.3'
+    """
+    prefix = sanitized_name + "-"
+    if filename.startswith(prefix) and filename.endswith(".tgz"):
+        return filename[len(prefix):-4]
+    return "unknown"
+
+
+def _bootstrap_cache_from_html(html_path: Path, requires_python: str | None) -> dict:
     cache: dict = {}
     if not html_path.exists():
         return cache
@@ -120,13 +142,13 @@ def _bootstrap_cache_from_html(html_path: Path, requires_python: str) -> dict:
             "url": url,
             "sha256": sha256,
             "requires_python": requires_python,
-            "version": _extract_version(filename),
+            "version": _extract_pypi_version(filename),
             "file_type": "whl" if filename.endswith(".whl") else "sdist",
         }
     return cache
 
 
-def load_file_cache(pkg_dir: Path, requires_python: str) -> dict:
+def load_file_cache(pkg_dir: Path, requires_python: str | None = None) -> dict:
     cache_path = pkg_dir / "file_cache.json"
     if cache_path.exists():
         return json.loads(cache_path.read_text())
@@ -139,7 +161,7 @@ def save_file_cache(pkg_dir: Path, cache: dict) -> None:
     )
 
 
-def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> list[dict]:
+def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache: dict) -> list[dict]:
     """Return all non-draft, non-prerelease wheel and sdist assets for a repo."""
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
     print(f"  Found {len(releases)} release(s)")
@@ -166,8 +188,42 @@ def collect_files(repo: str, requires_python: str, token: str, cache: dict) -> l
                     "api_url": asset["url"],
                     "sha256": digest,
                     "requires_python": requires_python,
-                    "version": _extract_version(name),
+                    "version": _extract_pypi_version(name),
                     "file_type": "whl" if name.endswith(".whl") else "sdist",
+                }
+                cache[name] = record
+                files.append(record)
+    return files
+
+
+def collect_npm_files(repo: str, pkg: dict, token: str, cache: dict) -> list[dict]:
+    """Return all non-draft, non-prerelease .tgz assets for a repo."""
+    sanitized_name = _sanitize_pkg_dir(pkg["package_name"])
+    releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
+    print(f"  Found {len(releases)} release(s)")
+
+    files = []
+    for release in releases:
+        if release.get("draft") or release.get("prerelease"):
+            continue
+        for asset in release.get("assets", []):
+            name = asset["name"]
+            if not name.endswith(".tgz"):
+                continue
+            if name in cache:
+                cache[name].setdefault("api_url", asset["url"])
+                print(f"  Using cached hash for {name}")
+                files.append(cache[name])
+            else:
+                print(f"  Hashing {name} ...", flush=True)
+                digest = sha256_of_asset(asset["url"], token)
+                record = {
+                    "filename": name,
+                    "url": asset["browser_download_url"],
+                    "api_url": asset["url"],
+                    "sha256": digest,
+                    "version": _extract_npm_version(name, sanitized_name),
+                    "file_type": "tgz",
                 }
                 cache[name] = record
                 files.append(record)
@@ -181,7 +237,7 @@ def _public_file(f: dict) -> dict:
         "api_url": f.get("api_url", ""),
         "sha256": f["sha256"],
         "file_type": f["file_type"],
-        "requires_python": f["requires_python"],
+        "requires_python": f.get("requires_python"),
     }
 
 
@@ -221,9 +277,10 @@ def write_html_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
 
     data = {
         "package_name": package_name,
+        "ecosystem": pkg.get("ecosystem", "pypi"),
         "description": repo_meta.get("description") or "",
         "repo_url": repo_meta.get("html_url") or "",
-        "requires_python": pkg["requires_python"],
+        "requires_python": pkg.get("requires_python"),
         "latest_version": latest_version,
         "total_versions": len(versions),
         "versions": versions,
@@ -233,22 +290,20 @@ def write_html_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
         ],
     }
 
-    # Write main data file as /data/index.html
     data_dir = output_dir / "data"
     data_dir.mkdir(exist_ok=True)
     (data_dir / "index.html").write_text(_json_to_html(data, package_name, "data"), encoding="utf-8")
     print(f"  Wrote {data_dir / 'index.html'}")
 
-    # Version directory
     v_dir = output_dir
-    # v_dir.mkdir(exist_ok=True)
 
     for group in version_groups:
         ver = group["version"]
         ver_data = {
             "package_name": package_name,
+            "ecosystem": pkg.get("ecosystem", "pypi"),
             "version": ver,
-            "requires_python": pkg["requires_python"],
+            "requires_python": pkg.get("requires_python"),
             "files": [_public_file(f) for f in group["files"]],
         }
 
@@ -259,8 +314,9 @@ def write_html_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], 
     if latest_version:
         latest_data = {
             "package_name": package_name,
+            "ecosystem": pkg.get("ecosystem", "pypi"),
             "version": latest_version,
-            "requires_python": pkg["requires_python"],
+            "requires_python": pkg.get("requires_python"),
             "files": [_public_file(f) for f in version_groups[0]["files"]],
         }
 
@@ -276,16 +332,28 @@ def main() -> int:
     if not token:
         sys.exit("error: GITHUB_TOKEN environment variable is required")
 
+    for pkg in PACKAGES:
+        if "ecosystem" not in pkg:
+            sys.exit(f"error: package '{pkg.get('package_name')}' is missing the required 'ecosystem' field in packages.json")
+
     env = Environment(loader=FileSystemLoader(str(ROOT)), autoescape=True)
     template = env.get_template("pkg_template.html")
+    index_template = env.get_template("index_template.html")
+
+    pkg_summaries: list[dict] = []
 
     for pkg in PACKAGES:
-        print(f"\nProcessing {pkg['package_name']} ({pkg['repo']}) ...")
-        output_dir = ROOT / pkg["package_name"]
+        ecosystem = pkg["ecosystem"]
+        sanitized_name = _sanitize_pkg_dir(pkg["package_name"])
+        print(f"\nProcessing {pkg['package_name']} ({pkg['repo']}) [{ecosystem}] ...")
+        output_dir = ROOT / sanitized_name
         output_dir.mkdir(exist_ok=True)
 
-        cache = load_file_cache(output_dir, pkg["requires_python"])
-        files = collect_files(pkg["repo"], pkg["requires_python"], token, cache)
+        cache = load_file_cache(output_dir, pkg.get("requires_python"))
+        if ecosystem == "npm":
+            files = collect_npm_files(pkg["repo"], pkg, token, cache)
+        else:
+            files = collect_pypi_files(pkg["repo"], pkg.get("requires_python"), token, cache)
         save_file_cache(output_dir, cache)
         print(f"  Collected {len(files)} artifact(s)")
 
@@ -293,15 +361,30 @@ def main() -> int:
         version_groups = _group_by_version(files)
         html = template.render(
             package_name=pkg["package_name"],
+            ecosystem=ecosystem,
             package_files=files,
             version_groups=version_groups,
             description=repo_meta.get("description") or "",
             repo_url=repo_meta.get("html_url") or "",
-            requires_python=pkg["requires_python"],
+            requires_python=pkg.get("requires_python"),
         )
         (output_dir / "index.html").write_text(html, encoding="utf-8")
         print(f"  Wrote {output_dir / 'index.html'}")
         write_html_outputs(output_dir, pkg, version_groups, repo_meta)
+
+        pkg_summaries.append({
+            "name": sanitized_name,
+            "display_name": pkg["package_name"],
+            "ecosystem": ecosystem,
+            "description": repo_meta.get("description") or "",
+            "url": sanitized_name + "/",
+            "version_req": pkg.get("requires_python") or "",
+            "latest_version": version_groups[0]["version"] if version_groups else "",
+        })
+
+    index_html = index_template.render(packages=pkg_summaries)
+    (ROOT / "index.html").write_text(index_html, encoding="utf-8")
+    print("\nWrote index.html")
 
     print("\nDone.")
     return 0

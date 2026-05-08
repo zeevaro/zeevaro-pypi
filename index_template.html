@@ -283,15 +283,15 @@
   <main>
     <div class="container">
 
-      
-      
+      {% set has_pypi = packages | selectattr('ecosystem', 'equalto', 'pypi') | list | length > 0 %}
+      {% set has_npm  = packages | selectattr('ecosystem', 'equalto', 'npm')  | list | length > 0 %}
 
 <div class="section-header">
-        <div class="section-label">3 Packages</div>
+        <div class="section-label">{{ packages | length }} Package{{ 's' if packages | length != 1 }}</div>
         <div class="ecosystem-filter">
           <button class="eco-btn active" data-eco="all">All</button>
-          <button class="eco-btn" data-eco="pypi">PyPI</button>
-          <button class="eco-btn" data-eco="npm">npm</button>
+          {% if has_pypi %}<button class="eco-btn" data-eco="pypi">PyPI</button>{% endif %}
+          {% if has_npm  %}<button class="eco-btn" data-eco="npm">npm</button>{% endif %}
         </div>
       </div>
 
@@ -303,66 +303,32 @@
       </div>
 
       <div class="packages-grid">
-        
-        <a href="zeevaro-middleware/" class="package-card" data-ecosystem="pypi">
-          <div class="pkg-icon">
-            
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            </svg>
-            
-          </div>
-          <div class="pkg-info">
-            <div class="pkg-name-row">
-              <span class="pkg-name">zeevaro-middleware</span>
-              <span class="pkg-eco-badge pkg-eco-pypi">PYPI</span>
-            </div>
-            <div class="pkg-meta">
-              Python &gt;=3.12
-            </div>
-          </div>
-        </a>
-        
-        <a href="tradex-core/" class="package-card" data-ecosystem="pypi">
-          <div class="pkg-icon">
-            
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            </svg>
-            
-          </div>
-          <div class="pkg-info">
-            <div class="pkg-name-row">
-              <span class="pkg-name">tradex-core</span>
-              <span class="pkg-eco-badge pkg-eco-pypi">PYPI</span>
-            </div>
-            <div class="pkg-meta">
-              Python &gt;=3.12
-            </div>
-          </div>
-        </a>
-        
-        <a href="tradex-contracts/" class="package-card" data-ecosystem="npm">
-          <div class="pkg-icon npm-icon">
-            
+        {% for pkg in packages %}
+        <a href="{{ pkg.url }}" class="package-card" data-ecosystem="{{ pkg.ecosystem }}">
+          <div class="pkg-icon{% if pkg.ecosystem == 'npm' %} npm-icon{% endif %}">
+            {% if pkg.ecosystem == 'npm' %}
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
               <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
               <line x1="12" y1="22.08" x2="12" y2="12"/>
             </svg>
-            
+            {% else %}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+            {% endif %}
           </div>
           <div class="pkg-info">
             <div class="pkg-name-row">
-              <span class="pkg-name">tradex-contracts</span>
-              <span class="pkg-eco-badge pkg-eco-npm">NPM</span>
+              <span class="pkg-name">{{ pkg.display_name }}</span>
+              <span class="pkg-eco-badge pkg-eco-{{ pkg.ecosystem }}">{{ pkg.ecosystem | upper }}</span>
             </div>
             <div class="pkg-meta">
-              Latest: v1.0.5
+              {% if pkg.ecosystem == 'pypi' and pkg.version_req %}Python {{ pkg.version_req }}{% elif pkg.latest_version %}Latest: v{{ pkg.latest_version }}{% else %}No releases{% endif %}
             </div>
           </div>
         </a>
-        
+        {% endfor %}
       </div>
       <div class="no-pkg-results" id="no-pkg-results">No packages match your search.</div>
 

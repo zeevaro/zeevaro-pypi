@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>zeevaro-middleware &mdash; Zeevaro PyPI</title>
+  <title>zeevaro-middleware &mdash; Zeevaro Packages</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -114,10 +114,12 @@
       white-space: nowrap;
     }
 
-    .badge-version { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
-    .badge-python  { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
-    .badge-repo    { background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; }
-    .badge-repo:hover { background: #f1f5f9; color: #0f172a; }
+    .badge-version        { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+    .badge-python         { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
+    .badge-repo           { background: #f8fafc; color: #475569; border: 1px solid #cbd5e1; text-decoration: none; }
+    .badge-repo:hover     { background: #f1f5f9; color: #0f172a; }
+    .badge-ecosystem-pypi { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
+    .badge-ecosystem-npm  { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
     .hero-description {
       font-size: 0.95rem;
@@ -290,6 +292,7 @@
     }
     .badge-whl   { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
     .badge-sdist { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+    .badge-tgz   { background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; }
 
     .file-link {
       font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
@@ -337,6 +340,30 @@
     }
     .api-btn:hover { background: #eef2ff; border-color: #818cf8; color: #4338ca; }
     .api-btn.copied { color: #22c55e; border-color: #22c55e; background: none; }
+
+    /* ── Collapse toggle ────────────────────────────────────────────── */
+    .collapse-toggle {
+      text-align: center;
+      padding: 0.5rem 0 1.5rem;
+    }
+
+    .show-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.48rem 1.25rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .show-more-btn:hover { background: #f8fafc; border-color: #94a3b8; color: #0f172a; }
+    .show-more-btn svg { transition: transform 0.2s; flex-shrink: 0; }
+    .show-more-btn.expanded svg { transform: rotate(180deg); }
 
     /* ── No results ─────────────────────────────────────────────────── */
     .no-results {
@@ -395,6 +422,7 @@
       <div class="hero-top">
         <span class="hero-name">zeevaro-middleware</span>
         <div class="hero-badges">
+          <span class="badge badge-ecosystem-pypi">PYPI</span>
           
           <span class="badge badge-version">v1.9.0</span>
           
@@ -413,6 +441,7 @@
         </div>
       </div>
       
+      
       <div class="install-box">
         <span class="install-label">pip</span>
         <span class="install-cmd" id="install-cmd">pip install zeevaro-middleware --extra-index-url https://zeevaro.github.io/zeevaro-pypi/</span>
@@ -421,6 +450,7 @@
           Copy
         </button>
       </div>
+      
     </div>
   </div>
 
@@ -443,7 +473,7 @@
 
       <div id="version-list">
         
-        <div class="version-card" data-version="1.9.0">
+        <div class="version-card" data-version="1.9.0" data-index="1">
           <div class="version-card-header">
             <span class="version-number">v1.9.0</span>
             <span class="latest-badge">latest</span>
@@ -451,8 +481,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.9.0/zeevaro_middleware-1.9.0-py3-none-any.whl#sha256=39e5d2fc0d1dda169f1954486bed22476e83d57b3821ecbf48a392d1014f60a6"
@@ -476,8 +505,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.9.0/zeevaro_middleware-1.9.0.tar.gz#sha256=f57231edc8de8fb86a981d04bdbf1af11b5712150473bf708dcd31857bc2ebc0"
@@ -502,7 +530,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.8.1">
+        <div class="version-card" data-version="1.8.1" data-index="2">
           <div class="version-card-header">
             <span class="version-number">v1.8.1</span>
             
@@ -510,8 +538,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.1/zeevaro_middleware-1.8.1-py3-none-any.whl#sha256=25e22b12438960cf09d4e9f43f936cefa01ab044836f7286aa44c9b02bbe1b8b"
@@ -535,8 +562,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.1/zeevaro_middleware-1.8.1.tar.gz#sha256=773ceb446e80ea2869693bbd59f711eb973794d33e506dee62106fa20e8ca267"
@@ -561,7 +587,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.8.0">
+        <div class="version-card" data-version="1.8.0" data-index="3">
           <div class="version-card-header">
             <span class="version-number">v1.8.0</span>
             
@@ -569,8 +595,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.0/zeevaro_middleware-1.8.0-py3-none-any.whl#sha256=dc8eca5e6f15ba5543c8c2669104049ec0f947da3ce7eddfc9d08fe336c47eb6"
@@ -594,8 +619,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.8.0/zeevaro_middleware-1.8.0.tar.gz#sha256=bbabbbb295861942e37865a4504773d3d99803bd1ccea0c84848a0e1f67ca66d"
@@ -620,7 +644,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.7.1">
+        <div class="version-card" data-version="1.7.1" data-index="4">
           <div class="version-card-header">
             <span class="version-number">v1.7.1</span>
             
@@ -628,8 +652,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.1/zeevaro_middleware-1.7.1-py3-none-any.whl#sha256=8319173cdd301e13093cf594d5876b535dc9a44c17db0d4c625ca9e15a42b7eb"
@@ -653,8 +676,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.1/zeevaro_middleware-1.7.1.tar.gz#sha256=a4068a6de69d80a55c7e0229902806cacc522f07e8acd3b819bcabd31585798a"
@@ -679,7 +701,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.7.0">
+        <div class="version-card" data-version="1.7.0" data-index="5">
           <div class="version-card-header">
             <span class="version-number">v1.7.0</span>
             
@@ -687,8 +709,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.0/zeevaro_middleware-1.7.0-py3-none-any.whl#sha256=b9bc30b2414bac9d35e721a3e67cd81854fb1ef5ba36d2af1653e58dbd9c9e3b"
@@ -712,8 +733,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.7.0/zeevaro_middleware-1.7.0.tar.gz#sha256=fa10630e8a20d5a92ab7de16d4a44978b57c09626bb1a5f095b98dca29201e3e"
@@ -738,7 +758,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.6.0">
+        <div class="version-card" data-version="1.6.0" data-index="6">
           <div class="version-card-header">
             <span class="version-number">v1.6.0</span>
             
@@ -746,8 +766,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.6.0/zeevaro_middleware-1.6.0-py3-none-any.whl#sha256=f6b4140b0cf899fe208095a93b9b3191c4192081783f51c6fb3f5707222fb427"
@@ -771,8 +790,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.6.0/zeevaro_middleware-1.6.0.tar.gz#sha256=5fca481a81e72d41a274dfee91a2839e1ad09be479f553d72bb17d65bddf59e7"
@@ -797,7 +815,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.5.0">
+        <div class="version-card" data-version="1.5.0" data-index="7">
           <div class="version-card-header">
             <span class="version-number">v1.5.0</span>
             
@@ -805,8 +823,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.5.0/zeevaro_middleware-1.5.0-py3-none-any.whl#sha256=0572bd9f950ad132ce614435118ee0fd7d52252aa8e02b60c909ef921c7b817e"
@@ -830,8 +847,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.5.0/zeevaro_middleware-1.5.0.tar.gz#sha256=30e94f0b7a7f6ae4a065dfff6002cdb0326d60eff6b102f0f7b14ac195ca509e"
@@ -856,7 +872,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.4.0">
+        <div class="version-card" data-version="1.4.0" data-index="8">
           <div class="version-card-header">
             <span class="version-number">v1.4.0</span>
             
@@ -864,8 +880,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.4.0/zeevaro_middleware-1.4.0-py3-none-any.whl#sha256=a515ac3ed4e12e45919c52a622c284865d8c932d8cab7c16c39277b0d6e9ee84"
@@ -889,8 +904,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.4.0/zeevaro_middleware-1.4.0.tar.gz#sha256=c44f5357a7c92476c274f46b386dcdf8569b4ee02d5229a81443e439c42c3b17"
@@ -915,7 +929,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.3.0">
+        <div class="version-card" data-version="1.3.0" data-index="9">
           <div class="version-card-header">
             <span class="version-number">v1.3.0</span>
             
@@ -923,8 +937,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.3.0/zeevaro_middleware-1.3.0-py3-none-any.whl#sha256=a2a7c6dc658b4dc269bda0b1e99c08216c6c708f4064c8a436767cddc002bdc2"
@@ -948,8 +961,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.3.0/zeevaro_middleware-1.3.0.tar.gz#sha256=4e53d29b1fdecb90b0b27b3edcced2ba2cf7ea0af63b651ed078cb6711586011"
@@ -974,7 +986,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.2.0">
+        <div class="version-card" data-version="1.2.0" data-index="10">
           <div class="version-card-header">
             <span class="version-number">v1.2.0</span>
             
@@ -982,8 +994,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.2.0/zeevaro_middleware-1.2.0-py3-none-any.whl#sha256=7c783cf486f7c684df4b2359b561fb491f04f56ceea6b7617bd82b85a550aaec"
@@ -1007,8 +1018,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.2.0/zeevaro_middleware-1.2.0.tar.gz#sha256=f8471b07ab16dc29ace74f4be118ee507cabcbd9e47d8c189b20169ec5ba4266"
@@ -1033,7 +1043,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.1.0">
+        <div class="version-card" data-version="1.1.0" data-index="11">
           <div class="version-card-header">
             <span class="version-number">v1.1.0</span>
             
@@ -1041,8 +1051,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.1.0/zeevaro_middleware-1.1.0-py3-none-any.whl#sha256=d4a0473253a06a4c5667ff3c7018870f7ac186f48fa85c9a74789497fa7cb7b0"
@@ -1066,8 +1075,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.1.0/zeevaro_middleware-1.1.0.tar.gz#sha256=3d7f1aeb6ade1f2fed060a8cf5b77e319011c2aaf2a4a5b4995d6c49ff7da116"
@@ -1092,7 +1100,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.0.4">
+        <div class="version-card" data-version="1.0.4" data-index="12">
           <div class="version-card-header">
             <span class="version-number">v1.0.4</span>
             
@@ -1100,8 +1108,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.4/zeevaro_middleware-1.0.4-py3-none-any.whl#sha256=98ef831ec4c7a1dd479a017d33d9db1dc31ec9bd59d78b14c47e2f260e58cd94"
@@ -1125,8 +1132,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.4/zeevaro_middleware-1.0.4.tar.gz#sha256=fee916756744494a84461254edb924aeec9b82127c8700d4e2c6b03358caf712"
@@ -1151,7 +1157,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.0.3">
+        <div class="version-card" data-version="1.0.3" data-index="13">
           <div class="version-card-header">
             <span class="version-number">v1.0.3</span>
             
@@ -1159,8 +1165,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.3/zeevaro_middleware-1.0.3-py3-none-any.whl#sha256=0b8d257561ee11e5e797d4a332a7fd0912f5c9f818f0b0f28e7110bfdcd5a20c"
@@ -1184,8 +1189,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.3/zeevaro_middleware-1.0.3.tar.gz#sha256=6199967816d27162697ef3df56929097bff3bce57339607167d3fbe1c475235d"
@@ -1210,7 +1214,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.0.2">
+        <div class="version-card" data-version="1.0.2" data-index="14">
           <div class="version-card-header">
             <span class="version-number">v1.0.2</span>
             
@@ -1218,8 +1222,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.2/zeevaro_middleware-1.0.2-py3-none-any.whl#sha256=92debacad78fd0b716d9737bd6ef921aeff0d7fbe6522889ba35cbcf29e4af9e"
@@ -1243,8 +1246,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.2/zeevaro_middleware-1.0.2.tar.gz#sha256=74aab6df69482344db521db907e4593ff50842a2efbd6a232e2cbc44d4c48518"
@@ -1269,7 +1271,7 @@
           
         </div>
         
-        <div class="version-card" data-version="1.0.1">
+        <div class="version-card" data-version="1.0.1" data-index="15">
           <div class="version-card-header">
             <span class="version-number">v1.0.1</span>
             
@@ -1277,8 +1279,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-whl">
-              wheel
+            <span class="type-badge badge-whl">wheel
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.1/zeevaro_middleware-1.0.1-py3-none-any.whl#sha256=e1f8efe1d201169a2ec32894c6f7f12b6a61c695a991144c533581843b82e367"
@@ -1302,8 +1303,7 @@
           </div>
           
           <div class="file-row">
-            <span class="type-badge badge-sdist">
-              sdist
+            <span class="type-badge badge-sdist">sdist
             </span>
             <a
               href="https://github.com/zeevaro/zeevaro-middleware/releases/download/v1.0.1/zeevaro_middleware-1.0.1.tar.gz#sha256=c04a335cd89a523e957cc24662a527b5ccbd9f44b0f18eb95bf6c386b826af1d"
@@ -1330,13 +1330,20 @@
         
       </div>
 
+      <div class="collapse-toggle" id="collapse-toggle" style="display:none">
+        <button class="show-more-btn" id="show-more-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          Show older versions
+        </button>
+      </div>
+
       <div class="no-results" id="no-results">No versions match the filter.</div>
 
     </div>
   </main>
 
   <footer>
-    Zeevaro Private PyPI &mdash; Powered by GitHub Pages
+    Zeevaro Packages &mdash; Powered by GitHub Pages
   </footer>
 
   <script>
@@ -1373,34 +1380,68 @@
       });
     }
 
-    // ── Filter handler ──────────────────────────────────────────────────
-    const filterInput = document.getElementById('version-filter');
-    const filterCount = document.getElementById('filter-count');
-    const noResults   = document.getElementById('no-results');
-    const cards       = document.querySelectorAll('.version-card');
+    // ── Collapse state ──────────────────────────────────────────────────
+    const VISIBLE_DEFAULT = 5;
+    let isExpanded = false;
 
+    const filterInput    = document.getElementById('version-filter');
+    const filterCount    = document.getElementById('filter-count');
+    const noResults      = document.getElementById('no-results');
+    const cards          = document.querySelectorAll('.version-card');
+    const collapseToggle = document.getElementById('collapse-toggle');
+    const showMoreBtn    = document.getElementById('show-more-btn');
+    const olderCount     = Math.max(0, cards.length - VISIBLE_DEFAULT);
+
+    const CHEVRON_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
+
+    function updateToggleBtn(isFiltering) {
+      if (olderCount === 0 || isFiltering) {
+        collapseToggle.style.display = 'none';
+        return;
+      }
+      collapseToggle.style.display = '';
+      if (isExpanded) {
+        showMoreBtn.classList.add('expanded');
+        showMoreBtn.innerHTML = CHEVRON_SVG + ' Show fewer versions';
+      } else {
+        showMoreBtn.classList.remove('expanded');
+        showMoreBtn.innerHTML = CHEVRON_SVG + ' Show ' + olderCount + ' older version' + (olderCount !== 1 ? 's' : '');
+      }
+    }
+
+    // ── Filter handler ──────────────────────────────────────────────────
     function applyFilter(raw) {
       const constraints = parseConstraints(raw);
+      const isFiltering = raw !== '' && constraints.length > 0;
       let visible = 0;
       cards.forEach(function(card) {
-        const show = raw === '' || constraints.length === 0 || matchesAll(card.dataset.version, constraints);
+        const matchesFilter = !isFiltering || matchesAll(card.dataset.version, constraints);
+        const idx = parseInt(card.dataset.index, 10);
+        let show;
+        if (isFiltering) {
+          show = matchesFilter;
+        } else {
+          show = idx <= VISIBLE_DEFAULT || isExpanded;
+        }
         card.classList.toggle('hidden', !show);
         if (show) visible++;
       });
-      filterCount.textContent = raw ? visible + ' of ' + cards.length + ' shown' : '';
-      noResults.style.display = (visible === 0 && raw !== '') ? 'block' : 'none';
+      filterCount.textContent = isFiltering ? visible + ' of ' + cards.length + ' shown' : '';
+      noResults.style.display = (visible === 0 && isFiltering) ? 'block' : 'none';
+      updateToggleBtn(isFiltering);
     }
+
+    showMoreBtn.addEventListener('click', function() {
+      isExpanded = !isExpanded;
+      applyFilter(filterInput.value.trim());
+    });
 
     filterInput.addEventListener('input', function() {
       const raw = this.value.trim();
       applyFilter(raw);
-      // Keep URL in sync so the filtered view is shareable
       const url = new URL(window.location.href);
-      if (raw) {
-        url.searchParams.set('filter', raw);
-      } else {
-        url.searchParams.delete('filter');
-      }
+      if (raw) { url.searchParams.set('filter', raw); }
+      else      { url.searchParams.delete('filter'); }
       history.replaceState(null, '', url);
     });
 
@@ -1408,10 +1449,8 @@
     (function() {
       const params = new URLSearchParams(window.location.search);
       const initial = params.get('filter') || params.get('v') || '';
-      if (initial) {
-        filterInput.value = initial;
-        applyFilter(initial);
-      }
+      if (initial) { filterInput.value = initial; }
+      applyFilter(initial);
     })();
 
     // ── Copy helpers ────────────────────────────────────────────────────

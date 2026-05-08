@@ -1,4 +1,4 @@
-# Contributing to zeevaro-pypi
+# Contributing to zeevaro-packages
 
 This document covers how to make changes to the index infrastructure itself — the automation scripts, workflow, and templates. For adding a new package, see [ONBOARDING.md](ONBOARDING.md).
 
@@ -8,23 +8,34 @@ This document covers how to make changes to the index infrastructure itself — 
 
 ```
 zeevaro-pypi/
-├── index.html                        # Root PEP 503 index (one <a> per package)
-├── pkg_template.html                 # Jinja2 template for per-package pages
+├── index.html                        # Root package index — AUTO-GENERATED, do not edit by hand
+├── index_template.html               # Jinja2 template for the root index — edit this instead
+├── pkg_template.html                 # Jinja2 template for per-package pages (ecosystem-aware)
 ├── update_package.py                 # Index rebuild script
 ├── requirements.txt                  # Python deps for update_package.py
+├── packages.json                     # Registry — ecosystem field is REQUIRED on every entry
 ├── .github/
 │   └── workflows/
 │       └── update_packages.yml       # Triggered by dispatch or manually
 ├── <package-name>/
 │   ├── index.html                    # Auto-generated — do not edit by hand
-│   └── file_cache.json               # SHA-256 cache — auto-generated — do not edit by hand
+│   ├── file_cache.json               # SHA-256 cache — auto-generated — do not edit by hand
+│   ├── data/index.html               # Full metadata JSON-in-HTML — auto-generated
+│   ├── latest/index.html             # Latest version metadata — auto-generated
+│   └── v<version>/index.html         # Per-version metadata — auto-generated
 ├── README.md
-├── ARCHITECTURE.md
-├── ONBOARDING.md
-└── CONTRIBUTING.md
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── ONBOARDING.md
+│   ├── SECRETS.md
+│   └── CONTRIBUTING.md
 ```
 
-**Rule:** Never manually edit `<package-name>/index.html` or `<package-name>/file_cache.json`. Both are overwritten on every workflow run. All changes to package index content must go through `update_package.py`.
+**Rules:**
+- Never manually edit `index.html` (root) — it is regenerated from `index_template.html` on every build run
+- Never manually edit `<package-name>/index.html` or `<package-name>/file_cache.json` — both are overwritten on every workflow run
+- All changes to package index content must go through `update_package.py`
+- Every entry in `packages.json` must include the `"ecosystem"` field (`"pypi"` or `"npm"`)
 
 ---
 
@@ -42,24 +53,31 @@ pip install -r requirements.txt
 
 ### Running `update_package.py` locally
 
-You need a PAT with `repo` scope on the source repos listed in `PACKAGES`:
+You need a PAT with `repo` scope on the source repos listed in `packages.json`:
 
 ```bash
 export GITHUB_TOKEN=ghp_your_token_here
 python update_package.py
 ```
 
-Inspect the output — each `<package-name>/index.html` should contain `<a href="...whl#sha256=...">` entries for every release.
+Inspect the output — each `<package-name>/index.html` should be generated, and root `index.html` should be regenerated from `index_template.html`.
 
-### Testing the index with pip
+For PyPI packages: confirm each page contains `<a href="...whl#sha256=...">` entries for every release.
+For npm packages: confirm each page shows `.tgz` download links and SHA-256 checksums.
 
-Start a local HTTP server:
+### Testing the index with a local server
+
+```bash
+bash scripts/start.sh
+```
+
+Or manually:
 
 ```bash
 python -m http.server 8080
 ```
 
-In another terminal:
+Test a PyPI package in another terminal:
 
 ```bash
 pip install <your-package-name> \
@@ -71,29 +89,73 @@ pip install <your-package-name> \
 
 ## Modifying `update_package.py`
 
-The script has no test suite. When making changes:
+The script dispatches on the `ecosystem` field of each package entry. Key functions:
+
+| Function | Ecosystem | Role |
+|---|---|---|
+| `collect_pypi_files()` | pypi | Fetches `.whl` and `.tar.gz` assets from GitHub Releases |
+| `collect_npm_files()` | npm | Fetches `.tgz` assets from GitHub Releases |
+| `_sanitize_pkg_dir()` | both | Converts `@scope/name` → `scope-name` for filesystem/URL use |
+| `_extract_pypi_version()` | pypi | Extracts version from wheel/sdist filename |
+| `_extract_npm_version()` | npm | Extracts version from `<sanitized-name>-<version>.tgz` |
+
+When making changes:
 
 1. Run it locally against the real GitHub API (`GITHUB_TOKEN=... python update_package.py`)
-2. Inspect `<package-name>/index.html` — confirm all versions appear with correct SHA-256 hashes
-3. Verify the HTML is valid PEP 503: each link must end in `#sha256=<64-char-hex>`
-4. Run `python -m http.server 8080` and install a package locally to confirm pip resolves correctly
-5. Do **not** commit the generated `<package>/index.html` or `<package>/file_cache.json` changes — the workflow regenerates both; your PR should only contain changes to `update_package.py`, `packages.json`, templates, or root `index.html`
+2. For PyPI: inspect `<package-name>/index.html` — confirm all versions appear with correct SHA-256 hashes and valid PEP 503 links
+3. For npm: inspect `<package-name>/index.html` — confirm `.tgz` download links and SHA-256 hashes appear
+4. For both: inspect root `index.html` — confirm ecosystem badges and filter buttons render correctly
+5. Run `bash scripts/start.sh` and verify the UI works in a browser
+6. Do **not** commit generated `<package>/index.html` or `<package>/file_cache.json` changes — the workflow regenerates both; your PR should only contain source file changes
 
 ---
 
 ## Modifying `pkg_template.html`
 
-The template is rendered by Jinja2. Template variables:
+The template is rendered by Jinja2 and is ecosystem-aware via `{% if ecosystem == 'npm' %}` conditionals.
+
+Template variables:
 
 | Variable | Type | Description |
 |---|---|---|
-| `package_name` | `str` | Normalized package name (e.g. `<package-name>`) |
-| `package_files` | `list[dict]` | List of file dicts with keys: `filename`, `url`, `sha256`, `requires_python` |
+| `package_name` | `str` | Package name, may be a scoped npm name like `@scope/name` |
+| `ecosystem` | `str` | `"pypi"` or `"npm"` |
+| `package_files` | `list[dict]` | All file records with keys: `filename`, `url`, `sha256`, `file_type`, `requires_python` |
+| `version_groups` | `list[dict]` | Files grouped by version: `[{"version": "1.0.0", "files": [...]}]` |
+| `description` | `str` | GitHub repo description |
+| `repo_url` | `str` | GitHub repo URL |
+| `requires_python` | `str \| None` | Python version constraint (PyPI only; `None` for npm) |
 
-The rendered output must be valid PEP 503 HTML:
-- Each file must be an `<a>` tag whose `href` is `{url}#sha256={sha256}`
-- The `data-requires-python` attribute is optional but recommended
-- No JavaScript, no CSS, no redirects — just plain HTML
+File record fields:
+
+| Field | PyPI | npm |
+|---|---|---|
+| `file_type` | `"whl"` or `"sdist"` | `"tgz"` |
+| `requires_python` | version string | `None` |
+
+The rendered PyPI output must be valid PEP 503 HTML: each file `<a>` tag's `href` must end in `#sha256=<64-char-hex>`.
+
+---
+
+## Modifying `index_template.html`
+
+This Jinja2 template is rendered to `index.html` after every build run. Template variables:
+
+| Variable | Type | Description |
+|---|---|---|
+| `packages` | `list[dict]` | One entry per processed package |
+
+Per-package dict fields:
+
+| Field | Description |
+|---|---|
+| `name` | Filesystem-safe name (e.g. `org-pkg-name` for `@org/pkg-name`) |
+| `display_name` | Original name as in `packages.json` (may contain `@scope/`) |
+| `ecosystem` | `"pypi"` or `"npm"` |
+| `description` | GitHub repo description |
+| `url` | Relative URL to package page (e.g. `zeevaro-middleware/`) |
+| `version_req` | `requires_python` value for PyPI packages, empty string for npm |
+| `latest_version` | Latest released version, or empty string if no releases |
 
 ---
 

@@ -41,6 +41,7 @@ jobs:
           git add index.html
           git add */index.html
           git add */*/index.html
+          git add */*/*/index.html
           git add */file_cache.json
           if git diff --cached --quiet; then
             echo "No changes — skipping commit"

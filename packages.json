@@ -2,11 +2,18 @@
   {
     "repo": "zeevaro/zeevaro-middleware",
     "package_name": "zeevaro-middleware",
+    "ecosystem": "pypi",
     "requires_python": ">=3.12"
   },
   {
     "repo": "zeevaro/tradex-core",
     "package_name": "tradex-core",
+    "ecosystem": "pypi",
     "requires_python": ">=3.12"
+  },
+  {
+    "repo": "zeevaro/tradex",
+    "package_name": "tradex-contracts",
+    "ecosystem": "npm"
   }
 ]
