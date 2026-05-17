@@ -161,7 +161,7 @@ def save_file_cache(pkg_dir: Path, cache: dict) -> None:
     )
 
 
-def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache: dict) -> list[dict]:
+def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache: dict, tag_prefix: str = "") -> list[dict]:
     """Return all non-draft, non-prerelease wheel and sdist assets for a repo."""
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
     print(f"  Found {len(releases)} release(s)")
@@ -169,6 +169,8 @@ def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache
     files = []
     for release in releases:
         if release.get("draft") or release.get("prerelease"):
+            continue
+        if tag_prefix and not release["tag_name"].startswith(tag_prefix):
             continue
         for asset in release.get("assets", []):
             name = asset["name"]
@@ -199,12 +201,15 @@ def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache
 def collect_npm_files(repo: str, pkg: dict, token: str, cache: dict) -> list[dict]:
     """Return all non-draft, non-prerelease .tgz assets for a repo."""
     sanitized_name = _sanitize_pkg_dir(pkg["package_name"])
+    tag_prefix = pkg.get("tag_prefix", "")
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
     print(f"  Found {len(releases)} release(s)")
 
     files = []
     for release in releases:
         if release.get("draft") or release.get("prerelease"):
+            continue
+        if tag_prefix and not release["tag_name"].startswith(tag_prefix):
             continue
         for asset in release.get("assets", []):
             name = asset["name"]
@@ -353,7 +358,7 @@ def main() -> int:
         if ecosystem == "npm":
             files = collect_npm_files(pkg["repo"], pkg, token, cache)
         else:
-            files = collect_pypi_files(pkg["repo"], pkg.get("requires_python"), token, cache)
+            files = collect_pypi_files(pkg["repo"], pkg.get("requires_python"), token, cache, pkg.get("tag_prefix", ""))
         save_file_cache(output_dir, cache)
         print(f"  Collected {len(files)} artifact(s)")
 

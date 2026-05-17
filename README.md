@@ -59,12 +59,13 @@ The artifacts remain private (GitHub Release assets on the source repo). The HTM
 
 Every entry in `packages.json` requires the `ecosystem` field:
 
-| Field | Required | Description |
-|---|---|---|
-| `repo` | yes | GitHub repo in `org/name` format |
-| `package_name` | yes | Package name as it appears in the index. Scoped npm names like `@scope/name` are supported |
-| `ecosystem` | yes | `"pypi"` or `"npm"` |
-| `requires_python` | PyPI only | Python version constraint, e.g. `">=3.12"` |
+| Field             | Required  | Description                                                                                                                                                              |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `repo`            | yes       | GitHub repo in `org/name` format                                                                                                                                         |
+| `package_name`    | yes       | Package name as it appears in the index. Scoped npm names like `@scope/name` are supported                                                                               |
+| `ecosystem`       | yes       | `"pypi"` or `"npm"`                                                                                                                                                      |
+| `tag_prefix`      | yes       | Release tag prefix used to filter releases for this package (e.g. `"v"`, `"contracts-v"`). Required when a repo hosts multiple packages with separate release tag series |
+| `requires_python` | PyPI only | Python version constraint, e.g. `">=3.12"`                                                                                                                               |
 
 Example:
 
@@ -74,12 +75,14 @@ Example:
     "repo": "your-org/your-python-pkg",
     "package_name": "your-python-pkg",
     "ecosystem": "pypi",
-    "requires_python": ">=3.12"
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
   },
   {
-    "repo": "your-org/your-npm-pkg",
+    "repo": "your-org/monorepo",
     "package_name": "@your-org/your-npm-pkg",
-    "ecosystem": "npm"
+    "ecosystem": "npm",
+    "tag_prefix": "npm-pkg-v"
   }
 ]
 ```
@@ -88,8 +91,8 @@ Example:
 
 ## Repository secrets required
 
-| Secret | Purpose |
-|---|---|
+| Secret              | Purpose                                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `PACKAGES_READ_PAT` | PAT with `repo` scope on all indexed source repos — used by `update_package.py` to list and download release assets for SHA-256 hashing |
 
 ---

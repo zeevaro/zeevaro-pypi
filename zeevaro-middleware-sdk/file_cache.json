@@ -1,0 +1,10 @@
+{
+  "zeevaro-middleware-sdk-1.0.0.tgz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/422565552",
+    "file_type": "tgz",
+    "filename": "zeevaro-middleware-sdk-1.0.0.tgz",
+    "sha256": "c6ea6ca09599e489307e6f248ef0b264e766e6fccde524a9d55751b382415d33",
+    "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/js-sdk-v1.0.0/zeevaro-middleware-sdk-1.0.0.tgz",
+    "version": "1.0.0"
+  }
+}

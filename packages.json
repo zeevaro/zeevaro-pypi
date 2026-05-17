@@ -1,19 +1,28 @@
 [
   {
-    "repo": "zeevaro/zeevaro-middleware",
-    "package_name": "zeevaro-middleware",
-    "ecosystem": "pypi",
-    "requires_python": ">=3.12"
-  },
-  {
     "repo": "zeevaro/tradex-core",
     "package_name": "tradex-core",
     "ecosystem": "pypi",
-    "requires_python": ">=3.12"
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
   },
   {
     "repo": "zeevaro/tradex",
-    "package_name": "tradex-contracts",
-    "ecosystem": "npm"
+    "package_name": "@tradex/contracts",
+    "ecosystem": "npm",
+    "tag_prefix": "contracts-v"
+  },
+  {
+    "repo": "zeevaro/zeevaro-middleware",
+    "package_name": "zeevaro-middleware-python-sdk",
+    "ecosystem": "pypi",
+    "requires_python": ">=3.12",
+    "tag_prefix": "python-sdk-v"
+  },
+  {
+    "repo": "zeevaro/zeevaro-middleware",
+    "package_name": "@zeevaro/middleware-sdk",
+    "ecosystem": "npm",
+    "tag_prefix": "js-sdk-v"
   }
 ]
