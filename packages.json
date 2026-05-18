@@ -1,5 +1,12 @@
 [
   {
+    "repo": "zeevaro/zeevaro-middleware",
+    "package_name": "zeevaro-middleware",
+    "ecosystem": "pypi",
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
+  },
+  {
     "repo": "zeevaro/tradex-core",
     "package_name": "tradex-core",
     "ecosystem": "pypi",
