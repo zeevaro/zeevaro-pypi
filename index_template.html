@@ -324,7 +324,7 @@
               <span class="pkg-eco-badge pkg-eco-{{ pkg.ecosystem }}">{{ pkg.ecosystem | upper }}</span>
             </div>
             <div class="pkg-meta">
-              {% if pkg.ecosystem == 'pypi' and pkg.version_req %}Python {{ pkg.version_req }}{% elif pkg.latest_version %}Latest: v{{ pkg.latest_version }}{% else %}No releases{% endif %}
+              {% if pkg.latest_version %}Latest: v{{ pkg.latest_version }}{% elif pkg.ecosystem == 'pypi' and pkg.version_req %}Python {{ pkg.version_req }}{% else %}No releases{% endif %}
             </div>
           </div>
         </a>
