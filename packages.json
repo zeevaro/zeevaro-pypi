@@ -14,6 +14,13 @@
     "tag_prefix": "v"
   },
   {
+    "repo": "zeevaro/zeevaro-auth",
+    "package_name": "zeevaro-auth",
+    "ecosystem": "pypi",
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
+  },
+  {
     "repo": "zeevaro/tradex",
     "package_name": "@tradex/contracts",
     "ecosystem": "npm",
