@@ -520,5 +520,23 @@
     "sha256": "614148c7d4a6c53fb99027f2822d10187076c93588a0f0c907676826a778c1fe",
     "url": "https://github.com/zeevaro/tradex-core/releases/download/v1.2.7/tradex_core-1.2.7.tar.gz",
     "version": "1.2.7"
+  },
+  "tradex_core-1.2.8-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/tradex-core/releases/assets/443960729",
+    "file_type": "whl",
+    "filename": "tradex_core-1.2.8-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "f068c3073fed001a105e157b346ad3120f450c5006846d8ce26bb9328e912631",
+    "url": "https://github.com/zeevaro/tradex-core/releases/download/v1.2.8/tradex_core-1.2.8-py3-none-any.whl",
+    "version": "1.2.8"
+  },
+  "tradex_core-1.2.8.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/tradex-core/releases/assets/443960725",
+    "file_type": "sdist",
+    "filename": "tradex_core-1.2.8.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "314d3bddaab1b914d1ef9e5d7a3628fee1bd9178bdb0d8df6afa3f15e1c9dcb7",
+    "url": "https://github.com/zeevaro/tradex-core/releases/download/v1.2.8/tradex_core-1.2.8.tar.gz",
+    "version": "1.2.8"
   }
 }
