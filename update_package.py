@@ -25,6 +25,7 @@ import html as html_lib
 import json
 import os
 import re
+import shutil
 import sys
 import urllib.request
 from pathlib import Path
@@ -37,6 +38,10 @@ except ImportError:
 API_BASE = "https://api.github.com"
 ROOT = Path(__file__).resolve().parent
 PACKAGES = json.loads((ROOT / "packages.json").read_text())
+
+# Maximum number of versions to keep in the index per package.
+# Override per-package with "max_versions" in packages.json.
+DEFAULT_MAX_VERSIONS = 10
 
 
 def github_api_get(url: str, token: str) -> list | dict:
@@ -274,6 +279,16 @@ def _json_to_html(data: dict, package_name: str, version: str) -> str:
 """
 
 
+def _prune_old_version_dirs(output_dir: Path, kept_versions: set[str]) -> None:
+    """Remove v<version> directories that are no longer in the index."""
+    for entry in output_dir.iterdir():
+        if entry.is_dir() and entry.name.startswith("v") and entry.name not in {"latest", "data"}:
+            version = entry.name[1:]
+            if version not in kept_versions:
+                shutil.rmtree(entry)
+                print(f"  Pruned old version dir {entry.name}/")
+
+
 def write_html_outputs(output_dir: Path, pkg: dict, version_groups: list[dict], repo_meta: dict) -> None:
     """Write data/index.html and v/<version>/index.html + v/latest/index.html."""
     package_name = pkg["package_name"]
@@ -364,6 +379,17 @@ def main() -> int:
 
         repo_meta = github_api_get(f"{API_BASE}/repos/{pkg['repo']}", token)
         version_groups = _group_by_version(files)
+
+        max_versions = pkg.get("max_versions", DEFAULT_MAX_VERSIONS)
+        if len(version_groups) > max_versions:
+            pruned = version_groups[max_versions:]
+            version_groups = version_groups[:max_versions]
+            print(f"  Capped to {max_versions} versions (dropped {len(pruned)} oldest)")
+        _prune_old_version_dirs(output_dir, {g["version"] for g in version_groups})
+
+        # Rebuild files list from kept version_groups only (for template rendering)
+        files = [f for g in version_groups for f in g["files"]]
+
         html = template.render(
             package_name=pkg["package_name"],
             ecosystem=ecosystem,
