@@ -38,10 +38,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git add */index.html
-          git add */*/index.html
-          git add */file_cache.json
+          git add -A -- index.html '*/index.html' '*/*/index.html' '*/file_cache.json'
           if git diff --cached --quiet; then
             echo "No changes — skipping commit"
           else
