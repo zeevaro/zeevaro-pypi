@@ -38,5 +38,12 @@
     "package_name": "@zeevaro/middleware-sdk",
     "ecosystem": "npm",
     "tag_prefix": "js-sdk-v"
+  },
+  {
+    "repo": "zeevaro/zeevaro-documentation",
+    "package_name": "zeevaro-documentation",
+    "ecosystem": "pypi",
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
   }
 ]
