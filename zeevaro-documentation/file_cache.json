@@ -1,0 +1,20 @@
+{
+  "zeevaro_documentation-0.1.0-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-documentation/releases/assets/473571329",
+    "file_type": "whl",
+    "filename": "zeevaro_documentation-0.1.0-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "e7a982db636d25f77feaa9a8c361ac48352e9e1ebd01c97dad97abb52bcbc908",
+    "url": "https://github.com/zeevaro/zeevaro-documentation/releases/download/v0.1.0/zeevaro_documentation-0.1.0-py3-none-any.whl",
+    "version": "0.1.0"
+  },
+  "zeevaro_documentation-0.1.0.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-documentation/releases/assets/473571330",
+    "file_type": "sdist",
+    "filename": "zeevaro_documentation-0.1.0.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "dd91e39890de385b685da23cb001e853c1746dc76608d492c9f86057e0639155",
+    "url": "https://github.com/zeevaro/zeevaro-documentation/releases/download/v0.1.0/zeevaro_documentation-0.1.0.tar.gz",
+    "version": "0.1.0"
+  }
+}
