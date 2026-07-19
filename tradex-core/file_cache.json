@@ -1007,6 +1007,24 @@
     "url": "https://github.com/zeevaro/tradex-core/releases/download/v2.0.11/tradex_core-2.0.11.tar.gz",
     "version": "2.0.11"
   },
+  "tradex_core-2.0.12-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/tradex-core/releases/assets/482193158",
+    "file_type": "whl",
+    "filename": "tradex_core-2.0.12-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "41553ab3bb6f67916834274460df9814d226dac4fcb57bc30d804bb6dc8135f2",
+    "url": "https://github.com/zeevaro/tradex-core/releases/download/v2.0.12/tradex_core-2.0.12-py3-none-any.whl",
+    "version": "2.0.12"
+  },
+  "tradex_core-2.0.12.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/tradex-core/releases/assets/482193159",
+    "file_type": "sdist",
+    "filename": "tradex_core-2.0.12.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "d034be8087b752ce1059226d20336ed085c7987dc7ecdbab8b1d66038825826b",
+    "url": "https://github.com/zeevaro/tradex-core/releases/download/v2.0.12/tradex_core-2.0.12.tar.gz",
+    "version": "2.0.12"
+  },
   "tradex_core-2.0.2-py3-none-any.whl": {
     "api_url": "https://api.github.com/repos/zeevaro/tradex-core/releases/assets/472353492",
     "file_type": "whl",
