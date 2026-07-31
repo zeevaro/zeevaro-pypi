@@ -335,6 +335,14 @@
     "url": "https://github.com/zeevaro/tradex/releases/download/contracts-v1.0.5/tradex-contracts-1.0.5.tgz",
     "version": "1.0.5"
   },
+  "tradex-contracts-1.0.50.tgz": {
+    "api_url": "https://api.github.com/repos/zeevaro/tradex/releases/assets/496122631",
+    "file_type": "tgz",
+    "filename": "tradex-contracts-1.0.50.tgz",
+    "sha256": "e0e33829cb88cefc429cdac72eb1dd5f85e2a6e6f0b0eb55a86fd9c712b67a13",
+    "url": "https://github.com/zeevaro/tradex/releases/download/contracts-v1.0.50/tradex-contracts-1.0.50.tgz",
+    "version": "1.0.50"
+  },
   "tradex-contracts-1.0.6.tgz": {
     "api_url": "https://api.github.com/repos/zeevaro/tradex/releases/assets/424284541",
     "file_type": "tgz",
