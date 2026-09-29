@@ -359,6 +359,24 @@
     "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v3.0.2/zeevaro_middleware-3.0.2.tar.gz",
     "version": "3.0.2"
   },
+  "zeevaro_middleware-3.0.3-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/597331673",
+    "file_type": "whl",
+    "filename": "zeevaro_middleware-3.0.3-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "2063d5b3b6f71978d446782d55d1fb52800b114619ae9361f8391c134a1d6ba2",
+    "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v3.0.3/zeevaro_middleware-3.0.3-py3-none-any.whl",
+    "version": "3.0.3"
+  },
+  "zeevaro_middleware-3.0.3.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/597331678",
+    "file_type": "sdist",
+    "filename": "zeevaro_middleware-3.0.3.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "92373c2d9672344c9d6722c8a24bae897f41abdc6bfa595c80ff6826a3943cf1",
+    "url": "https://github.com/zeevaro/zeevaro-middleware/releases/download/v3.0.3/zeevaro_middleware-3.0.3.tar.gz",
+    "version": "3.0.3"
+  },
   "zeevaro_middleware_python_sdk-1.0.0-py3-none-any.whl": {
     "api_url": "https://api.github.com/repos/zeevaro/zeevaro-middleware/releases/assets/422551138",
     "file_type": "whl",
