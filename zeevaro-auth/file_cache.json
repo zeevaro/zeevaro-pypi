@@ -412,5 +412,23 @@
     "sha256": "b8ec9b36168b3ce887507f0d55fd4546f49605442a7d9c1023dbd90af2e5bda1",
     "url": "https://github.com/zeevaro/zeevaro-auth/releases/download/v2.2.1/zeevaro_auth-2.2.1.tar.gz",
     "version": "2.2.1"
+  },
+  "zeevaro_auth-2.3.0-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/599945937",
+    "file_type": "whl",
+    "filename": "zeevaro_auth-2.3.0-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "9f4a85a457004386903a1f985f5c16e0d4c35a31029b863f8d5c61ea9cb9f323",
+    "url": "https://github.com/zeevaro/zeevaro-auth/releases/download/v2.3.0/zeevaro_auth-2.3.0-py3-none-any.whl",
+    "version": "2.3.0"
+  },
+  "zeevaro_auth-2.3.0.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/599945934",
+    "file_type": "sdist",
+    "filename": "zeevaro_auth-2.3.0.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "ce977424e885f93d2fdc84826b4d43f77610e58e0bb1774890a82405e1b5caef",
+    "url": "https://github.com/zeevaro/zeevaro-auth/releases/download/v2.3.0/zeevaro_auth-2.3.0.tar.gz",
+    "version": "2.3.0"
   }
 }
