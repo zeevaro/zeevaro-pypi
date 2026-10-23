@@ -45,5 +45,12 @@
     "ecosystem": "pypi",
     "requires_python": ">=3.12",
     "tag_prefix": "v"
+  },
+  {
+    "repo": "zeevaro/zeevaro-communication",
+    "package_name": "zeevaro-communication",
+    "ecosystem": "pypi",
+    "requires_python": ">=3.12",
+    "tag_prefix": "v"
   }
 ]
