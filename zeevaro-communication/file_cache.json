@@ -1,1 +1,20 @@
-{}
+{
+  "zeevaro_communication-1.0.0-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-communication/releases/assets/668114016",
+    "file_type": "whl",
+    "filename": "zeevaro_communication-1.0.0-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "8350c968cf424ca2ea65d26f37f2a467fa381e0119b41d363025595f6cce25e8",
+    "url": "https://github.com/zeevaro/zeevaro-communication/releases/download/v1.0.0/zeevaro_communication-1.0.0-py3-none-any.whl",
+    "version": "1.0.0"
+  },
+  "zeevaro_communication-1.0.0.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-communication/releases/assets/668114015",
+    "file_type": "sdist",
+    "filename": "zeevaro_communication-1.0.0.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "7b274c0449d62fe091d7fe6e49f063ce4a5313fa5fc04e659df0bec640314495",
+    "url": "https://github.com/zeevaro/zeevaro-communication/releases/download/v1.0.0/zeevaro_communication-1.0.0.tar.gz",
+    "version": "1.0.0"
+  }
+}
