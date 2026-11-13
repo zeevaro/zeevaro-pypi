@@ -250,5 +250,23 @@
     "sha256": "12c8107e738de76338a8308e961dcaa578d687f0f8bf9317e5f83057f9adf5df",
     "url": "https://github.com/zeevaro/zeevaro-communication/releases/download/v2.7.1/zeevaro_communication-2.7.1.tar.gz",
     "version": "2.7.1"
+  },
+  "zeevaro_communication-2.7.2-py3-none-any.whl": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-communication/releases/assets/742141468",
+    "file_type": "whl",
+    "filename": "zeevaro_communication-2.7.2-py3-none-any.whl",
+    "requires_python": ">=3.12",
+    "sha256": "8ad57cd1883cf0b751a0e7624ede49a08e127313bd9f15ff55a099aed6ce2db0",
+    "url": "https://github.com/zeevaro/zeevaro-communication/releases/download/v2.7.2/zeevaro_communication-2.7.2-py3-none-any.whl",
+    "version": "2.7.2"
+  },
+  "zeevaro_communication-2.7.2.tar.gz": {
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-communication/releases/assets/742141469",
+    "file_type": "sdist",
+    "filename": "zeevaro_communication-2.7.2.tar.gz",
+    "requires_python": ">=3.12",
+    "sha256": "cd90704ef9c5a044214921c835eac6e0bc77c150a4477fcf3a22a9a1b470c240",
+    "url": "https://github.com/zeevaro/zeevaro-communication/releases/download/v2.7.2/zeevaro_communication-2.7.2.tar.gz",
+    "version": "2.7.2"
   }
 }
