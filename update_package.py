@@ -166,6 +166,24 @@ def save_file_cache(pkg_dir: Path, cache: dict) -> None:
     )
 
 
+def _cache_entry_is_current(cache: dict, name: str, asset: dict) -> bool:
+    """Whether the cached record for *name* still describes this release asset.
+
+    A re-uploaded asset keeps its filename but gets a new asset id, so its
+    cached ``api_url`` points at a deleted asset (the authenticated download
+    returns 404) and its cached hash may no longer match. Such entries are
+    re-hashed. Entries from before ``api_url`` was recorded are trusted.
+    """
+    entry = cache.get(name)
+    if entry is None:
+        return False
+    cached_api_url = entry.get("api_url")
+    if cached_api_url and cached_api_url != asset["url"]:
+        print(f"  {name} was re-uploaded (asset id changed); re-hashing")
+        return False
+    return True
+
+
 def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache: dict, tag_prefix: str = "") -> list[dict]:
     """Return all non-draft, non-prerelease wheel and sdist assets for a repo."""
     releases = github_api_get(f"{API_BASE}/repos/{repo}/releases?per_page=100", token)
@@ -181,9 +199,8 @@ def collect_pypi_files(repo: str, requires_python: str | None, token: str, cache
             name = asset["name"]
             if not (name.endswith(".whl") or name.endswith(".tar.gz")):
                 continue
-            if name in cache:
-                if "api_url" not in cache[name]:
-                    cache[name]["api_url"] = asset["url"]
+            if _cache_entry_is_current(cache, name, asset):
+                cache[name].setdefault("api_url", asset["url"])
                 print(f"  Using cached hash for {name}")
                 files.append(cache[name])
             else:
@@ -220,7 +237,7 @@ def collect_npm_files(repo: str, pkg: dict, token: str, cache: dict) -> list[dic
             name = asset["name"]
             if not name.endswith(".tgz"):
                 continue
-            if name in cache:
+            if _cache_entry_is_current(cache, name, asset):
                 cache[name].setdefault("api_url", asset["url"])
                 print(f"  Using cached hash for {name}")
                 files.append(cache[name])
