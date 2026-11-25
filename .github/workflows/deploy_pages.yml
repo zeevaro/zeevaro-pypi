@@ -15,13 +15,14 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Upload and deploy run in separate jobs. When deploy-pages runs in the same job,
+# straight after upload-pages-artifact, its artifact lookup can come back empty
+# ("No artifacts named github-pages") for an artifact finalized a moment earlier:
+# https://github.com/actions/deploy-pages/issues/451
 jobs:
-  deploy:
+  build:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +37,26 @@ jobs:
         with:
           path: "."
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+
+      # The artifact listing has been seen to lag by up to ~46 s (issue #451).
+      # A failed lookup creates no deployment, so one delayed retry is safe.
+      - name: Wait for the artifact listing to catch up
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 60
+
+      - name: Deploy to GitHub Pages (retry)
+        id: deployment_retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
