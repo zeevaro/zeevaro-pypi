@@ -486,7 +486,7 @@
     "version": "2.4.0"
   },
   "zeevaro_auth-2.4.1-py3-none-any.whl": {
-    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/800081500",
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/800087382",
     "file_type": "whl",
     "filename": "zeevaro_auth-2.4.1-py3-none-any.whl",
     "requires_python": ">=3.12",
@@ -495,7 +495,7 @@
     "version": "2.4.1"
   },
   "zeevaro_auth-2.4.1.tar.gz": {
-    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/800081505",
+    "api_url": "https://api.github.com/repos/zeevaro/zeevaro-auth/releases/assets/800087390",
     "file_type": "sdist",
     "filename": "zeevaro_auth-2.4.1.tar.gz",
     "requires_python": ">=3.12",
